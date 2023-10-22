@@ -9,3 +9,8 @@ buildear la infra de postgres
 ```
 docker-compose -f dan-pg.yml -p pg-infra up --build -d
 ```
+
+buildear la infra de mongo
+```
+docker-compose -f dan-mongo.yml -p mongo-infra up --build -d
+```
