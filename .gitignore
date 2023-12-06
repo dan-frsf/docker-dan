@@ -27,3 +27,6 @@ pg-data
 mysql_data
 pg-data/
 mysql_data/
+mongo-data/
+prometheus/
+grafana/

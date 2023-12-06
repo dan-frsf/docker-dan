@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+
+  mysql-dan:
+    image: mysql:8.1.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: danrootpassword
+      MYSQL_DATABASE: dan
+      MYSQL_USER: danuser
+      MYSQL_PASSWORD: danpassword
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - newtwork-db
+
+  phpmyadmin-dan:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    environment:
+      PMA_HOST: mysql-dan
+      PMA_USER: danuser
+      PMA_PASSWORD: danpassword
+    ports:
+      - "8086:80"
+    depends_on:
+      - mysql-dan
+    networks:
+      - newtwork-db
+
+  ms-usuarios-i1:
+    container_name: ms-usuarios-i1
+    build:
+      context: ../ms-usuarios/
+      # Use an image built from the specified dockerfile in the `polling-app-server` directory.
+      dockerfile: ./Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-dan:3306/dan
+      - spring.profiles.active=default
+    networks:
+      - newtwork-db
+      - newtwork-back
+
+  ms-usuarios-i2:
+    container_name: ms-usuarios-i2
+    build:
+      context: ../ms-usuarios/
+      # Use an image built from the specified dockerfile in the `polling-app-server` directory.
+      dockerfile: ./Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-dan:3306/dan
+      - spring.profiles.active=default
+    networks:
+      - newtwork-db
+      - newtwork-back
+
+  ms-usuarios-i3:
+    container_name: ms-usuarios-i3
+    build:
+      context: ../ms-usuarios/
+      # Use an image built from the specified dockerfile in the `polling-app-server` directory.
+      dockerfile: ./Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-dan:3306/dan
+      - spring.profiles.active=default
+    networks:
+      - newtwork-db
+      - newtwork-back
+
+  haproxy:
+    container_name: mygateway
+    build:
+      context: ../dan-haproxy/
+      dockerfile: ./Dockerfile
+    image: mygateway:latest
+    volumes:
+      - ./conf:/etc/haproxy"
+      - ./logs:/dev/log"
+    links:
+      - ms-usuarios-i2:ms-usuarios-i1
+      - ms-usuarios-i2:ms-usuarios-i2
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - ms-usuarios-i1
+      - ms-usuarios-i2
+      - ms-usuarios-i3
+      - phpmyadmin-dan
+    networks:
+      - newtwork-back
+
+networks:
+  newtwork-db:
+    driver: bridge
+  newtwork-back:
+    driver: bridge    

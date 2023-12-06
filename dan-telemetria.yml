@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: 'prom/prometheus:latest'
+    ports:
+      - 6590:9090  
+    volumes:
+      - ./prom-config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+    command: '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - dan-db-network
+
+  grafana:
+    image: 'grafana/grafana:latest'
+    ports:
+      - '6591:3000'
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    links:
+      - prometheus:prometheus      
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - dan-db-network
+
+networks:
+  dan-db-network:
+    driver: bridge

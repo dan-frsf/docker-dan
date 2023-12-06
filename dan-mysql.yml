@@ -1,9 +1,8 @@
 version: '3.8'
 
 services:
-  mysql-dan:
+  mysql-dandb:
     image: mysql:8.1.0
-    container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: danrootpassword
       MYSQL_DATABASE: dan
@@ -14,22 +13,22 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - mynetwork
+      - dan-db-network
 
   phpmyadmin-dan:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin-container
     environment:
-      PMA_HOST: mysql-dan
+      PMA_HOST: mysql-dandb
       PMA_USER: danuser
       PMA_PASSWORD: danpassword
     ports:
       - "8086:80"
     depends_on:
-      - mysql-dan
+      - mysql-dandb
     networks:
-      - mynetwork
+      - dan-db-network
 
 networks:
-  mynetwork:
+  dan-db-network:
     driver: bridge

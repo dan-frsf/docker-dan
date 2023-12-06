@@ -13,7 +13,7 @@ services:
     volumes:
       - ./pg-data:/var/lib/postgresql/data
     networks:
-      - mynetwork
+      - dan-db-network
 
   pgadmin-dan:
     image: dpage/pgadmin4:latest
@@ -26,8 +26,8 @@ services:
     depends_on:
       - pg-dan
     networks:
-      - mynetwork
+      - dan-db-network
 
 networks:
-  mynetwork:
+  dan-db-network:
     driver: bridge
