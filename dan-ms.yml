@@ -3,27 +3,28 @@ version: '3.8'
 services:
 
   ms-usuarios:
-    container_name: ms-usuarios
     build:
       context: ../ms-usuarios/
       # Use an image built from the specified dockerfile in the `polling-app-server` directory.
       dockerfile: ./Dockerfile
-    ports:
-      - 9100:8080
+    # ports:
+    #   - 9100:8080
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-dandb:3306/dan
       - spring.profiles.active=default
     networks:
       - dan-db-network
+    deploy:
+      mode: replicated
+      replicas: 2
 
   ms-productos:
-    container_name: ms-productos
     build:
       context: ../dan-ms-productos/
       # Use an image built from the specified dockerfile in the `polling-app-server` directory.
       dockerfile: ./Dockerfile
-    ports:
-      - 9200:3000
+    # ports:
+    #   - 9200:3000
     environment:
       - DB_PASS="***"
       - DB_USER="user"
@@ -33,18 +34,20 @@ services:
       - dan-db-network
 
   ms-pedidos:
-    container_name: ms-pedidos
     build:
       context: ../ms-pedidos/
       # Use an image built from the specified dockerfile in the `polling-app-server` directory.
       dockerfile: ./Dockerfile
-    ports:
-      - 9300:8080
+    # ports:
+    #   - 9300:8080
     environment:
       - SPRING_DATASOURCE_URL=mongodb://root:danpwd@localhost:27017/dan-pedidos?authSource=admin
       - spring.profiles.active=default
     networks:
       - dan-db-network
+    deploy:
+      mode: replicated
+      replicas: 2
 
   dan-appui:
     container_name: dan-appui
