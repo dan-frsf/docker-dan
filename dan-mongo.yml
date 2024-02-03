@@ -13,7 +13,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: dan
     networks:
-      - mynetwork
+      - dan-db-network
 
   mongo-express:
     image: mongo-express
@@ -27,8 +27,8 @@ services:
     depends_on:
       - mongo-dan
     networks:
-      - mynetwork
+      - dan-db-network
 
 networks:
-  mynetwork:
+  dan-db-network:
     driver: bridge
